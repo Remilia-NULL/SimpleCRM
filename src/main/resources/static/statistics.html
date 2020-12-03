@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./js/echarts.js"></script>
+    <script src="layui/layui.all.js"></script>
+</head>
+<body>
+<div id="main" style="width: 600px;height:400px;"></div>
+<script type="text/javascript">
+
+    layui.use('jquery', function () {
+        var customerName = [];
+        var countId = [];
+        const $ = layui.jquery;
+        $.ajax({
+            type: "get",
+            data: {},
+            url: "/statistics/count",
+            success: function (data) {
+                $.each(data, function (index, item) {
+                    console.log(item.customerName);
+                    customerName.push(item.customerName);
+                    countId.push(item.countId);
+                })
+                // 基于准备好的dom，初始化echarts实例
+                var myChart = echarts.init(document.getElementById('main'));
+
+                // 指定图表的配置项和数据
+                var option = {
+                    title: {
+                        text: '客户订单数'
+                    },
+                    tooltip: {},
+                    legend: {
+                        data: ['订单']
+                    },
+                    xAxis: {
+                        data: customerName
+                    },
+                    yAxis: {},
+                    series: [{
+                        name: '订单',
+                        type: 'bar',
+                        data: countId
+                    }]
+                };
+
+                // 使用刚指定的配置项和数据显示图表。
+                myChart.setOption(option);
+            }
+        })
+
+    })
+
+
+</script>
+</body>
+</html>

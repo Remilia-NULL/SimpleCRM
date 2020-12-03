@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.OrderDao">
+    <insert id="add" parameterType="com.example.demo.pojo.Order">
+        INSERT INTO orders VALUES (0,#{customerId},#{goods},#{amount},#{ordersDate})
+    </insert>
+
+    <select id="showAll" resultType="com.example.demo.pojo.Order">
+        SELECT * FROM orders ORDER BY ordersId DESC
+    </select>
+
+    <delete id="del" parameterType="Integer">
+        DELETE FROM orders WHERE ordersId=#{ordersId}
+    </delete>
+
+    <update id="edit" parameterType="com.example.demo.pojo.Order">
+        UPDATE orders SET customerId = #{customerId} ,`goods` = #{goods}, `amount` = #{amount}, `ordersDate` = #{ordersDate} WHERE `ordersId` = #{ordersId}
+    </update>
+
+    <delete id="delById">
+        DELETE FROM orders WHERE ordersId IN (${ids})
+    </delete>
+</mapper>

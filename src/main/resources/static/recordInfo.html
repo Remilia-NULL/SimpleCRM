@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="layui/css/layui.css" media="all">
+    <script src="layui/layui.js"></script>
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+
+<form class="layui-form" lay-filter="recordInfo" action="">
+    <input hidden name="recordId"/>
+    <div class="layui-form-item">
+        <label class="layui-form-label">选择客户</label>
+        <div class="layui-input-inline">
+            <select name="customerId" id="customer">
+
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">销售方式</label>
+        <div class="layui-input-inline">
+            <input type="text" name="source" required lay-verify="required" placeholder="请输入联系人姓名" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">是否下单</label>
+        <div class="layui-input-inline">
+            <input type="radio" name="state" title="未下单" value="0" checked>
+            <input type="radio" name="state" title="已下单" value="1">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-inline">
+            <textarea name="note" required lay-verify="required" placeholder="请输入内容"
+                      class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">日期选择</label>
+            <div class="layui-input-block">
+                <input type="text" required lay-verify="required" name="recordDate" id="date" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    //Demo
+    const dataInfo = parent.recordInfo;
+    layui.use(['form', 'jquery', 'laydate'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+        var laydate = layui.laydate;
+        form.val("recordInfo", {
+            "recordId": dataInfo.recordId,
+            "source": dataInfo.source,
+            "note": dataInfo.note,
+            "state": dataInfo.state,
+            "recordDate": dataInfo.recordDate
+        });
+        //页面加载时查询所有客户
+        $.ajax({
+            url: "/customer/showAll",
+            success: function (res) {
+                //得到所有客户信息
+                var cus = res.data;
+                for (var i = 0; i < cus.length; i++) {
+                    //添加到select
+                    $("#customer").append("<option value=" + cus[i].customerId + ">" + cus[i].customerName + "</option>");
+                }
+                form.render();
+            }
+        });
+
+
+        //日期组件
+        laydate.render({
+            elem: '#date'
+            , trigger: 'click'//呼出事件改成click
+        });
+
+        //监听提交
+        form.on('submit(formDemo)', function (data) {
+
+            layer.confirm("确定修改", function () {
+                $.ajax({
+                    type: "post",
+                    data: data.field,
+                    url: "/record/edit",
+                    success: function () {
+                        window.parent.location.reload();
+                    }
+                });
+            });
+
+            return false;
+        });
+    });
+</script>
+
+</body>
+</html>

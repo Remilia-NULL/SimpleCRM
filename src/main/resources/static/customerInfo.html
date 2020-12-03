@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <script src="layui/layui.all.js"></script>
+</head>
+<body>
+<form class="layui-form" lay-filter="customerInfo" action="">
+    <input type="hidden" name="customerId"/>
+    <div class="layui-form-item">
+        <label class="layui-form-label">客户名称</label>
+        <div class="layui-input-inline">
+            <input type="text" name="customerName" required lay-verify="required" autocomplete="off"
+                   class="layui-input"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">联系人</label>
+        <div class="layui-input-inline">
+            <input type="text" name="contacts" required lay-verify="required" autocomplete="off" class="layui-input"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">电话</label>
+        <div class="layui-input-inline">
+            <input type=tel name="phone" required lay-verify="required" autocomplete="off" class="layui-input"/>
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">地址</label>
+        <div class="layui-input-block" style="width: 40%">
+            <textarea name="address" placeholder="请输入内容" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+</body>
+
+<script>
+    //console.log(parent.customerInfo);
+    const dataInfo = parent.customerInfo;
+    layui.use(['form', 'jquery'], function () {
+        const form = layui.form;
+        const $ = layui.jquery;
+        form.val("customerInfo", {
+            "customerId": dataInfo.customerId,
+            "customerName": dataInfo.customerName,
+            "contacts": dataInfo.contacts,
+            "phone": dataInfo.phone,
+            "address": dataInfo.address
+        });
+        form.on('submit(formDemo)', function (data) {
+            layer.confirm('是否修改', function () {
+                console.log(data.field);
+                $.ajax({
+                    type: "post",
+                    data: data.field,
+                    url: "/customer/edit",
+                    success: function () {
+                        window.parent.location.reload();
+                    }
+                });
+            });
+            return false;
+        });
+    });
+</script>
+</html>
